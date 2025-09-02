@@ -1,44 +1,35 @@
 package com.web;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.google.gson.*;
 
 public class Response {
-    public double x;
-    public double y;
-    public double r;
-    public boolean check;
-    public String clickTime;
-    public String executionTime;
+    private static final String RESPONSE_TEMPLATE = "Content-Type: application/json\nContent-Length: %d\nStatus: %d\n\n%s";
 
-    public Response(double x, double y, double r, long startTime){
-        this.x = x;
-        this.y = y;
-        this.r = r;
-        this.check = inGraph(x, y, r);
-        this.clickTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        this.executionTime = String.valueOf(System.nanoTime() - startTime);
+    public String buildSuccessResponse(Point point){
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("status", "success");
+
+        JsonObject pointJson = new JsonObject();
+        pointJson.addProperty("x", point.x);
+        pointJson.addProperty("y", point.y);
+        pointJson.addProperty("r", point.r);
+        pointJson.addProperty("check", point.check);
+        pointJson.addProperty("clickTime", point.clickTime);
+        pointJson.addProperty("executionTime", point.executionTime);
+
+        responseJson.add("data", pointJson);
+        return formatResponse(200, responseJson.toString());
     }
 
-    private static boolean inGraph(double x, double y, double r){
-        if (x<=0 && y>=0){
-            return x>=r && y<r/2; //第二象限 长方形
-        } else if (x>=0 && y>=0) {
-            return y <= (r - x); //第一象限 三角形
-        } else if (x >= 0 && y<=0) {
-            return x * x + y * y < r * r; //第四象限 1/4圆形
-        }
-        return false; //第三象限 无色块
+    public String buildErrorResponse(int statusCode, String message) {
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("status", statusCode);
+        responseJson.addProperty("message", message);
+        return formatResponse(statusCode, responseJson.toString());
     }
 
-    @Override
-    public String toString() {
-        return "Response: {" +
-                "x: " + x + "," +
-                "y: " + y + "," +
-                "r: " + r + "," +
-                "check: " + check + "," +
-                "currentTime: "+ clickTime + "," +
-                "executionTime: " + executionTime + "}";
+    private String formatResponse(int statusCode, String json) {
+        int contentLength = json.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+        return String.format(RESPONSE_TEMPLATE, contentLength, statusCode, json);
     }
 }
