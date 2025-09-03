@@ -33,12 +33,12 @@ public class Point {
 
     @Override
     public String toString() {
-        return "Response: {" +
-                "x: " + x + "," +
-                "y: " + y + "," +
-                "r: " + r + "," +
-                "check: " + check + "," +
-                "currentTime: "+ clickTime + "," +
+        return "Point: {" +
+                "x: " + x + ", " +
+                "y: " + y + ", " +
+                "r: " + r + ", " +
+                "check: " + check + ", " +
+                "clickTime: "+ clickTime + ", " +
                 "executionTime: " + executionTime + "}";
     }
 }

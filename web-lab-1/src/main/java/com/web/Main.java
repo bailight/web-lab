@@ -14,31 +14,26 @@ public class Main {
 
     public static void main(String[] args) {
         FCGIInterface fcgi = new FCGIInterface();
-        System.out.println("server start!");
+
         while (fcgi.FCGIaccept() >= 0) {
-            System.out.println("server get request");
             long startTime = System.nanoTime();
-            String clientResponse = null;
 
-            try {
-                if (FCGIInterface.request != null && FCGIInterface.request.inStream != null) {
+            try{
+                if (fcgi.request != null && fcgi.request.inStream != null){
                     String body = readRequestBody();
-                    Request.RequestDataPoint requestData = requestClient.parseAndValidate(body);
-                    Point point = new Point(requestData.x(), requestData.y(), requestData.r(), startTime);
-                    clientResponse = responseServer.buildSuccessResponse(point);
+                    Request.RequestDataPoint dataPoint = requestClient.parseAndValidate(body);
+                    Point point = new Point(dataPoint.x(), dataPoint.y(), dataPoint.r(), startTime);
+                    responseServer.buildSuccessResponse(point);
+                }else{
+                    responseServer.buildErrorResponse(400, "Invalid FCGI request.");
                 }
-            } catch (ValidationException | JsonException e) {
-                clientResponse = responseServer.buildErrorResponse(400, e.getMessage());
-            } catch (IOException e) {
-                clientResponse = responseServer.buildErrorResponse(500, "Failed to read request body");
-            } catch (Exception e) {
-                clientResponse = responseServer.buildErrorResponse(500, "Internal server error");
-            } finally {
-                if (clientResponse != null) {
-                    System.out.print(clientResponse);
-                }
+            } catch (JsonException e){
+                responseServer.buildErrorResponse(400, "Problem with json");
+            } catch (ValidationException e){
+                responseServer.buildErrorResponse(400, "Invalid input data");
+            } catch (Exception e){
+                responseServer.buildErrorResponse(400, e.getMessage());
             }
-
         }
     }
 

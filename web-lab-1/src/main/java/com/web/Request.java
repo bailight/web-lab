@@ -1,9 +1,8 @@
 package com.web;
 
 import com.exceptions.ValidationException;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import org.json.JSONObject;
+
 
 public class Request {
     private static final double X_MIN = -2.0;
@@ -13,31 +12,17 @@ public class Request {
     private static final double R_MIN = 0.0;
     private static final double R_MAX = 5.0;
 
-    private static final Gson gson = new Gson();
+    public RequestDataPoint parseAndValidate(String json) {
+        JSONObject jsonRequest = new JSONObject(json);
 
-    public RequestDataPoint parseAndValidate(String jsonString) {
-        JsonObject json = validateJsonFormat(jsonString);
-        double x = json.get("x").getAsDouble();
-        double y = json.get("y").getAsDouble();
-        double r = json.get("r").getAsDouble();
+        double x = jsonRequest.getDouble("x");
+        double y = jsonRequest.getDouble("y");
+        double r = jsonRequest.getDouble("r");
 
         validateCoordinate(x, y, r);
 
         return new RequestDataPoint(x, y, r);
     }
-
-    private JsonObject validateJsonFormat(String jsonString) {
-        if (jsonString == null || jsonString.trim().isEmpty()) {
-            throw new ValidationException("Request body cannot be null or empty");
-        }
-
-        try {
-            return gson.fromJson(jsonString, JsonObject.class);
-        } catch (JsonSyntaxException e) {
-            throw new ValidationException("Invalid JSON format: " + e.getMessage());
-        }
-    }
-
 
     private void validateCoordinate(double x, double y, double r) {
         if (x < X_MIN || x > X_MAX) {
