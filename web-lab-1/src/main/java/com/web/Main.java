@@ -5,6 +5,8 @@ import com.exceptions.ValidationException;
 import com.fastcgi.FCGIInterface;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 public class Main {
     private static final Request requestClient = new Request();
@@ -42,8 +44,12 @@ public class Main {
 
     private static String readRequestBody() throws IOException {
         FCGIInterface.request.inStream.fill();
-        byte[] buffer = new byte[FCGIInterface.request.inStream.available()];
-        int bytesRead = FCGIInterface.request.inStream.read(buffer);
-        return new String(buffer, 0, bytesRead, java.nio.charset.StandardCharsets.UTF_8);
+        int contentLength = FCGIInterface.request.inStream.available();
+        var buffer = ByteBuffer.allocate(contentLength);
+        var readBytes = FCGIInterface.request.inStream.read(buffer.array(), 0, contentLength);
+        var requestBodyRaw = new byte[readBytes];
+        buffer.get(requestBodyRaw);
+        buffer.clear();
+        return new String(requestBodyRaw, StandardCharsets.UTF_8);
     }
 }
