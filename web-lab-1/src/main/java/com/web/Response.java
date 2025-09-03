@@ -15,7 +15,7 @@ public class Response {
                 .put("r", point.r)
                 .put("result", point.check)
                 .put("clickTime", point.clickTime)
-                .put("executionTime", point.executionTime + "ns")
+                .put("executionTime", point.executionTime + " ns")
                 .toString();
 
         sendJson(200, jsonResponse);
