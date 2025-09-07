@@ -351,7 +351,7 @@ function clearTable() {
 
         localStorage.removeItem("data");
 
-        lengthData = 0;
+        lengthData = 1;
 
         drawCoordinateSystem(document.getElementById('graph').getContext('2d'));
         drawRegions(document.getElementById('graph').getContext('2d'));
