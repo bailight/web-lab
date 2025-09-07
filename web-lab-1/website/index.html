@@ -2,9 +2,130 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>web-lab-1</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/6.1.1/big.min.js"></script>
+    <script src="graph.js"></script>
 </head>
+
 <body>
 
+<header>
+    <div id="student-info" class="container">
+        <h1>Веб-программирование</h1>
+        <h2>ФИО: Чэнь Жохань</h2>
+        <h2>Вариант: 413107</h2>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+
+        <div class="top-grid">
+
+            <div class="card" id="canvas">
+                <div class="card-header">
+                    <h3 class="card-title">Координатная область</h3>
+                    <p class="card-subtitle">Изменяйте R для изменения размера фигур.</p>
+                </div>
+                <div class="card-body">
+                    <canvas id="graph" width="500" height="500"></canvas>
+                </div>
+            </div>
+
+            <div class="card" id="point-form-card">
+                <div class="card-header">
+                    <h3 class="card-title">Ввод координат точки</h3>
+                    <p class="card-subtitle">Введите значения для проверки попадания точки</p>
+                </div>
+                <div class="card-body">
+                    <form id="coordinateForm">
+                        <div id="point-form">
+                            <div class="form-group">
+                                <label for="X">X:</label>
+                                <select id="X" name="X" required>
+                                    <option value="-2">-2</option>
+                                    <option value="-1.5">-1.5</option>
+                                    <option value="-1">-1</option>
+                                    <option value="-0.5">-0.5</option>
+                                    <option value="0">0</option>
+                                    <option value="0.5">0.5</option>
+                                    <option value="1">1</option>
+                                    <option value="1.5">1.5</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Y">Y:</label>
+                                <input id="Y" name="Y" placeholder="от -3 до 5" required>
+                                <p class="form-hint">Допустимый диапазон: -3 до 5</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="R">R:</label>
+                                <select id="R" name="R" required>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <p class="form-hint">Изменяет размер фигур на графике</p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="reset">Сбросить</button>
+                                <button type="submit">Проверить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card results-section" id="point-table-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Результаты проверки
+                </h3>
+                <p class="card-subtitle">История проверок попадания точки в область</p>
+            </div>
+            <div class="card-body">
+                <div id="point-table">
+                    <div class="table-header">
+                        <h3>Последние результаты</h3>
+                        <button id="clearTable">
+                            <i class="fa fa-trash-o"></i>Очистить
+                        </button>
+                    </div>
+
+                    <div id="empty-table">
+                        <p>Нет данных</p>
+                    </div>
+
+                    <div class="table-container" id="tableContainer" style="display: none;">
+                        <table id="result-table">
+                            <thead>
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">X</th>
+                                <th scope="col">Y</th>
+                                <th scope="col">R</th>
+                                <th scope="col">Result</th>
+                                <th scope="col">Click time</th>
+                                <th scope="col">Execution time</th>
+                            </tr>
+                            </thead>
+                            <tbody id="results"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
 </body>
-</html>

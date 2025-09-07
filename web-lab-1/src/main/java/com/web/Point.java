@@ -22,7 +22,7 @@ public class Point {
 
     private static boolean inGraph(double x, double y, double r){
         if (x<=0 && y>=0){
-            return x>=r && y<r/2; //第二象限 长方形
+            return x>= -r && y<r/2; //第二象限 长方形
         } else if (x>=0 && y>=0) {
             return y <= (r - x); //第一象限 三角形
         } else if (x >= 0 && y<=0) {
