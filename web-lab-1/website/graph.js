@@ -264,15 +264,35 @@ function handleFormSubmit() {
     const yText = document.getElementById('Y').value;
     const r = parseFloat(document.getElementById('R').value);
 
-    let num = new Big(yText);
+    const numberRegex = /^-?\d+(\.\d+)?$/;
+
+    const expressionRegex = /^-?\d+(\.\d+)?([+*/]-?\d+(\.\d+)?)*(-[+*/]?\d+(\.\d+)?)*$/;
+
+    let num = new Big(0);
+
+    if (numberRegex.test(yText)){
+        num = new Big(yText);
+        console.log(num)
+    }else{
+        if (expressionRegex.test(yText)){
+            let expression = yText.match(/(\d+(\.\d+)?)|([+\-*/])/g);
+            let finalExpressionString = expression.join('');
+            let result = eval(finalExpressionString);
+            num = new Big(result);
+        }else{
+            alert('Y должно быть число или выражение');
+            return;
+        }
+    }
+
     let yValue =  new Big(0);
 
-    if (!/^-?\d+(\.\d+)?$/.test(yText)|| num.lt(-3) || num.gt(5)) {
+    if (num.lt(-3) || num.gt(5)) {
         alert('Y должно быть в диапазоне от -3 до 5');
         return;
     } else {
-        console.log(yText);
-        yValue = new Big((yText));
+        console.log(num);
+        yValue = num;
     }
 
     const data = JSON.stringify({x: x, y: yValue, r: r});
