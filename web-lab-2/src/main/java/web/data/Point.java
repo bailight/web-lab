@@ -11,7 +11,7 @@ public class Point {
     public String clickTime;
     public String executionTime;
 
-    public Point(double x, double y, double r, long startTime) {
+    public Point(double x, double y, double r, boolean check, long startTime) {
         this.x = x;
         this.y = y;
         this.r = r;
