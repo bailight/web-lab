@@ -15,7 +15,7 @@ public class Point {
         this.x = x;
         this.y = y;
         this.r = r;
-        this.check = false;
+        this.check = check;
         this.clickTime =  LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.executionTime = String.valueOf(System.nanoTime() - startTime);
     }

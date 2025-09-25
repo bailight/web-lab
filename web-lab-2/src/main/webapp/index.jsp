@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.util.List"%>
 <%@ page import="web.data.Point"%>
 <%@ page import="java.util.ArrayList" %>
@@ -10,8 +10,12 @@
     <title>web-lab-1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/6.1.1/big.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <% List<Point> results = new ArrayList<>();
-       session.setAttribute("results", results);
+    <%
+        List<Point> results = (List<Point>) session.getAttribute("results");
+        if (results == null) {
+            results = new ArrayList<>();
+            session.setAttribute("results", results);
+        }
     %>
 </head>
 
@@ -65,7 +69,7 @@
 
                             <div class="form-group">
                                 <label for="y">Y:</label>
-                                <input id="y" name="y" placeholder="от -3 до 3" required>
+                                <input id="y" name="y" placeholder="от -3 до 3" required value="0">
                             </div>
 
                             <div class="form-group">
@@ -99,11 +103,11 @@
                             <i class="fa fa-trash-o"></i>Очистить
                         </button>
                     </div>
-                    <%
-                        if (!results.isEmpty()) {
-                            for (Point point : results) {
-                    %>
-                    <div class="table-container" id="tableContainer">
+                    <div id="empty-table" style="display: <%= results.isEmpty() ? "block" : "none" %>;">
+                        <p>Нет данных</p>
+                    </div>
+
+                    <div class="table-container" id="tableContainer" style="display: <%= results.isEmpty() ? "none" : "block" %>;">
                         <table id="result-table">
                             <thead>
                             <tr>
@@ -117,24 +121,22 @@
                             </tr>
                             </thead>
                             <tbody id="results">
-                                <tr>
-                                    <td><%= point.getX() %></td>
-                                    <td><%= point.getY() %></td>
-                                    <td><%= point.getR() %></td>
-                                    <td><%= point.isCheck() %></td>
-                                    <td><%= point.getClickTime() %></td>
-                                    <td><%= point.getExecutionTime() %></td>
-                                </tr>
-                                <% }
-                        } else {%>
+                            <% int id = 1;
+                                for (Point point : results) {
+                            %>
+                            <tr>
+                                <td><%= id++ %></td>
+                                <td><%= point.getX() %></td>
+                                <td><%= point.getY() %></td>
+                                <td><%= point.getR() %></td>
+                                <td><%= point.isCheck() %></td>
+                                <td><%= point.getClickTime() %></td>
+                                <td><%= point.getExecutionTime() %></td>
+                            </tr>
+                            <% } %>
                             </tbody>
                         </table>
                     </div>
-
-                    <div id="empty-table">
-                        <p>Нет данных</p>
-                    </div>
-                    <% } %>
                 </div>
             </div>
         </div>
@@ -143,15 +145,9 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        initCanvas();
-
-        // document.getElementById('coordinateForm').addEventListener('submit', function(e) {
-        //     e.preventDefault();
-        //     handleFormSubmit();
-        // });
+        draw();
 
         document.getElementById('clearTable').addEventListener('click', clearTable);
-
 
         document.getElementById('r').addEventListener('change', function() {
             const rText = this.value;
@@ -160,33 +156,45 @@
             if (r_num.lt(1) || r_num.gt(4)) {
                 alert('R должно быть в диапазоне от 1 до 4');
             } else {
-                const canvas = document.getElementById('graph');
-                const ctx = canvas.getContext('2d');
+                const isTableEmpty = document.getElementById('results').innerHTML.trim() === '';
 
-                drawCoordinateSystem(ctx);
-                drawRegions(ctx);
+                if (isTableEmpty){
+                    const ctx = document.getElementById('graph').getContext('2d');
+                    drawCoordinateSystem(ctx);
+                    drawRegions(ctx);
+                    return;
+                }
+                draw();
             }
         });
 
+        document.getElementById('graph').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            handleCanvasClick(x, y);
+        });
 
     });
 
-    function initCanvas() {
+    function draw() {
         const canvas = document.getElementById('graph');
         const ctx = canvas.getContext('2d');
 
         drawCoordinateSystem(ctx);
         drawRegions(ctx);
 
-        canvas.addEventListener('click', function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            handleCanvasClick(x, y);
-        });
+        <%
+        if (!results.isEmpty()) {
+            for (Point point : results) {
+        %>
+            drawPoint(<%=point.getX()%>, <%=point.getY()%>, <%=point.getR()%>, <%=point.isCheck()%>);
+        <%
+            }
+        }
+        %>
     }
-
 
     function drawCoordinateSystem(ctx) {
         const width = ctx.canvas.width;
@@ -335,40 +343,18 @@
         const pointX = centerX + x * gridSize;
         const pointY = centerY - y * gridSize;
 
-        const animationSteps = 20;
-        let currentStep = 0;
+        ctx.save();
 
-        function animatePoint() {
-            if (currentStep < animationSteps) {
-                currentStep++;
+        ctx.fillStyle = isInside ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)';
+        ctx.strokeStyle = isInside ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)';
+        ctx.lineWidth = 2;
 
-                ctx.save();
+        ctx.beginPath();
+        ctx.arc(pointX, pointY, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
 
-                drawCoordinateSystem(ctx);
-                drawRegions(ctx);
-
-                ctx.fillStyle = isInside ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)';
-                ctx.strokeStyle = isInside ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)';
-                ctx.lineWidth = 2;
-
-                ctx.beginPath();
-                ctx.arc(pointX, pointY, 4, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-
-                if (currentStep === animationSteps) {
-                    ctx.font = '12px Inter, sans-serif';
-                    ctx.fillStyle = isInside ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)';
-                    ctx.textAlign = 'left';
-                    ctx.textBaseline = 'bottom';
-                }
-
-                ctx.restore();
-                requestAnimationFrame(animatePoint);
-            }
-        }
-
-        animatePoint();
+        ctx.restore();
     }
 
     function handleCanvasClick(canvasX, canvasY) {
@@ -451,25 +437,29 @@
     }
 
     function clearTable() {
-        const resultsBody = document.getElementById('results');
-        const emptyState = document.getElementById('empty-table');
-        const tableContainer = document.getElementById('tableContainer');
+        fetch('clear', { method: 'GET' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('error');
+                }
+                return response;
+            })
+            .then(() => {
+                const resultsBody = document.getElementById('results');
+                const emptyTable = document.getElementById('empty-table');
+                const tableContainer = document.getElementById('tableContainer');
 
-        setTimeout(() => {
-            resultsBody.innerHTML = '';
-            emptyState.style.display = 'block';
-            tableContainer.style.display = 'none';
+                resultsBody.innerHTML = '';
+                tableContainer.style.display = 'none';
+                emptyTable.style.display = 'block';
 
-            <%
-                session.removeAttribute("results");
-            %>
-
-
-            drawCoordinateSystem(document.getElementById('graph').getContext('2d'));
-            drawRegions(document.getElementById('graph').getContext('2d'));
-
-        }, 500);
-
+                const canvas = document.getElementById('graph');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawCoordinateSystem(ctx);
+                drawRegions(ctx);
+            })
+            .catch(error => console.error('clear error:', error));
     }
 
 </script>

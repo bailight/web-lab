@@ -19,8 +19,11 @@ public class ControllerServlet extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
 
-        List<Point> results = new ArrayList<>();
-        session.setAttribute("results", results);
+        List<Point> results = (List<Point>) session.getAttribute("results");
+        if (results == null) {
+            results = new ArrayList<>();
+        }
+        request.setAttribute("results", results);
 
         String xText = request.getParameter("x");
         String yText = request.getParameter("y");

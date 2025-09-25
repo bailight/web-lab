@@ -35,8 +35,11 @@ public class AreaCheckServlet extends HttpServlet{
             validateCoordinate(x, y, r);
 
             HttpSession session = request.getSession();
-            List<Point> results = new ArrayList<>();
-            session.setAttribute("results", results);
+            List<Point> results = (List<Point>) session.getAttribute("results");
+            if (results == null) {
+                results = new ArrayList<>();
+            }
+            request.setAttribute("results", results);
 
             Point point = new Point(x, y, r, check_point(x, y, r), startTime);
             results.add(point);
@@ -60,11 +63,11 @@ public class AreaCheckServlet extends HttpServlet{
 
     private static boolean check_point(double x, double y, double r){
         if (x <= 0 && y <= 0){
-            return y < r && x < r; //第三象限 正方形
+            return y >= -r && x >= -r; //第三象限 正方形
         } else if (x >= 0 && y >= 0) {
-            return x < r/2 && y < r; //第一象限 三角形
+            return x <= r/2 && y <= r; //第一象限 三角形
         } else if (x >= 0 && y <= 0) {
-            return x * x /4 + y * y /4 < r * r /4; //第四象限 1/4圆形
+            return x * x + y * y < r * r / 4; //第四象限 1/4圆形
         }else{
             return false;
         }
