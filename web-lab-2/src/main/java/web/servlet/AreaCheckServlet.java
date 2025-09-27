@@ -65,7 +65,7 @@ public class AreaCheckServlet extends HttpServlet{
         if (x <= 0 && y <= 0){
             return y >= -r && x >= -r; //第三象限 正方形
         } else if (x >= 0 && y >= 0) {
-            return x <= r/2 && y <= r; //第一象限 三角形
+            return y <= -2 * x + r; //第一象限 三角形
         } else if (x >= 0 && y <= 0) {
             return x * x + y * y < r * r / 4; //第四象限 1/4圆形
         }else{
