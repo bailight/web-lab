@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>web-lab-1</title>
+    <title>web-lab-2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/6.1.1/big.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <%
