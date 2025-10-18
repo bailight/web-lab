@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+<h:head>
+    <title>Welcome</title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <h:outputScript>
+        function updateClock() {
+            var clockPanel = document.getElementById('clockPanel');
+            var date = new Date();
+            var options = {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            };
+            clockPanel.textContent = date.toLocaleDateString('ru-RU', options);
+        }
+        window.onload = function() {
+            updateClock();
+            setInterval(updateClock, 8000);
+        }
+    </h:outputScript>
+    <style>
+        .simple-link {
+            display: inline-block;
+            background-color: #fff;
+            color: #333;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .simple-link:hover {
+            background-color: #f5f5f5;
+            color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        #clockPanel{
+            margin: 35px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #1a202c;
+            text-align: center;
+            padding: 18px 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(213, 213, 213, 0.25);
+            transition: all 0.4s ease;
+        }
+    </style>
+</h:head>
+<h:body>
+    <header>
+        <div id="header">
+            <div id="student-info" class="container">
+                <h1>Веб-программирование</h1>
+                <h2>ФИО: Чэнь Жохань</h2>
+                <h2>Вариант: 413107</h2>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="card" id="canvas">
+                <div class="card-header">
+                    <h1 class="card-title">Welcome</h1>
+                    <p class="card-subtitle">Часы меняет за 8 секунд.</p>
+                </div>
+                <div class="card-body" id="clock">
+                    <h:panelGroup layout="block" id="clockPanel">
+                        <h:outputText value="#{clockBean.currentDateTime}" />
+                    </h:panelGroup>
+                    <h:link value="Point page" outcome="index" styleClass="simple-link" />
+                </div>
+            </div>
+        </div>
+    </main>
+</h:body>
+</html>

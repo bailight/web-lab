@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="primefaces">
+
+<h:head>
+    <title>web-lab-3</title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/6.1.1/big.min.js"> </script>
+    <style>
+        .simple-link {
+            display: inline-block;
+            background-color: #fff;
+            color: #333;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .simple-link:hover {
+            background-color: #f5f5f5;
+            color: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        button[type='reset'] {
+             background: none;
+            border: 1px solid var(--light-dark);
+            color: var(--dark-light);
+            border-radius: var(--radius-sm);
+            padding:12px 24px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            transition: var(--transition);
+        }
+
+        button[type='reset']:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            justify-content: space-between;
+        }
+
+        .clearTable{
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .clearTable:hover {
+            color: var(--danger);
+        }
+
+        .error-hint {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        #coordinateForm #check-button{
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            transition: var(--transition);
+        }
+
+        #coordinateForm #check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        #coordinateForm #check-button:active {
+            transform: translateY(0);
+        }
+
+    </style>
+</h:head>
+<h:body>
+    <script type="text/javascript">
+        function drawCoordinateSystem(ctx) {
+            const width = ctx.canvas.width;
+            const height = ctx.canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxValue = 6;
+            const gridSize = width / (2 * maxValue);
+
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.fillStyle = '#fafafa';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+
+            for (let x = 0; x &lt; width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+            }
+
+            for (let y = 0; y &lt; height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.stroke();
+
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = '10px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            for (let i = -maxValue; i &lt;= maxValue; i++) {
+            if (i === 0) continue;
+            const x = centerX + i * gridSize;
+            ctx.fillText(i, x, centerY + 5);
+            drawTick(ctx, x, centerY);
+            }
+
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+
+            for (let i = -maxValue; i &lt;= maxValue; i++) {
+            if (i === 0) continue;
+            const y = centerY - i * gridSize;
+            ctx.fillText(i, centerX - 5, y);
+            drawTick(ctx, centerX, y);
+            }
+
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillStyle = '#1e293b';
+            ctx.textAlign = 'left';
+            ctx.fillText('X', width - 10, centerY + 5);
+            ctx.textAlign = 'right';
+            ctx.fillText('Y', centerX - 5, 15);
+            }
+
+            function drawTick(ctx, x, y) {
+            ctx.beginPath();
+            ctx.moveTo(x, y - 3);
+            ctx.lineTo(x, y + 3);
+            ctx.stroke();
+            }
+
+            function drawRegions(ctx) {
+            const canvas = document.getElementById('graph');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxValue = 6;
+            const gridSize = canvas.width / (2 * maxValue);
+            const r = document.getElementById('coordinateForm:r').value;
+
+            drawCurrentRegions(ctx, r, centerX, centerY, gridSize);
+        }
+
+        function drawCurrentRegions(ctx, r, centerX, centerY, gridSize) {
+            // 第三象限：矩形
+            ctx.fillStyle = 'rgba(79, 70, 229, 0.15)';
+            ctx.strokeStyle = 'rgba(79, 70, 229, 0.7)';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.rect(
+            centerX - r * gridSize,
+            centerY,
+            r * gridSize,
+            r * gridSize
+            );
+            ctx.fill();
+            ctx.stroke();
+
+            // 第一象限：三角形
+            ctx.fillStyle = 'rgba(124, 58, 237, 0.15)';
+            ctx.strokeStyle = 'rgba(124, 58, 237, 0.7)';
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + r * gridSize, centerY);
+            ctx.lineTo(centerX, centerY + (r/2) * gridSize);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 第四象限：1/4圆
+            ctx.fillStyle = 'rgba(63, 112, 219, 0.15)';
+            ctx.strokeStyle = 'rgba(63, 112, 219, 0.7)';
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, r * gridSize / 2, Math.PI, - Math.PI / 2 , false);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+
+        function drawPoint(x, y, r, isInside) {
+            const canvas = document.getElementById('graph');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxValue = 6;
+            const gridSize = canvas.width / (2 * maxValue);
+
+            const pointX = centerX + x * gridSize;
+            const pointY = centerY - y * gridSize;
+
+            ctx.save();
+
+            ctx.fillStyle = isInside ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)';
+            ctx.strokeStyle = isInside ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.arc(pointX, pointY, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function draw(){
+            const canvas = document.getElementById('graph');
+            const ctx = canvas.getContext('2d');
+
+            drawCoordinateSystem(ctx);
+            drawRegions(ctx);
+        }
+
+        function handleCanvasClick(canvasX, canvasY) {
+            const canvas = document.getElementById('graph');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxValue = 6;
+            const gridSize = canvas.width / (2 * maxValue);
+
+            const x = (canvasX - centerX) / gridSize;
+            const y = (centerY - canvasY) / gridSize;
+
+            const xRounded = Math.round(x);
+
+            if (xRounded &lt; -4 || xRounded > 4 || y &lt; -3 || y > 3) {
+                alert('Точка вне допустимого диапазона');
+                return;
+            }
+
+            document.getElementById('coordinateForm:x').value = xRounded;
+            document.getElementById('coordinateForm:y').value = y.toFixed(2);
+
+            console.log(xRounded, y.toFixed(2))
+
+            document.getElementById('coordinateForm:check-button').click();
+        }
+
+        function resetValues() {
+            document.getElementById("coordinateForm:x").value = "0";
+            document.getElementById("coordinateForm:y").value = "0";
+            document.getElementById("coordinateForm:r").value = "1";
+        }
+
+        window.onload = function() {
+            draw();
+
+            document.getElementById('canvas').addEventListener('click', function(e) {
+                if (e.target.id === 'graph') {
+                    const rect = e.target.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    handleCanvasClick(x, y);
+                }
+            });
+        };
+
+    </script>
+
+    <header>
+        <div id="header">
+            <div id="student-info" class="container">
+                <h1>Веб-программирование</h1>
+                <h2>ФИО: Чэнь Жохань</h2>
+                <h2>Вариант: 413107</h2>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+
+            <div class="top-grid">
+
+                <div class="card" id="canvas">
+                    <div class="card-header">
+                        <h3 class="card-title">Координатная область</h3>
+                        <p class="card-subtitle">Изменяйте R для изменения размера фигур.</p>
+                    </div>
+                    <h:panelGroup styleClass="card-body" id="graph-card">
+                        <h:outputLabel><canvas id="graph" width="500" height="500" /></h:outputLabel>
+                    </h:panelGroup>
+                </div>
+
+                <div class="card" id="point-form-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Ввод координат точки</h3>
+                        <p class="card-subtitle">Введите значения для проверки попадания точки</p>
+                    </div>
+                    <div class="card-body">
+                        <h:form id="coordinateForm" >
+                            <div id="point-form">
+                                <div class="form-group">
+                                    <h:outputLabel value="X: "/>
+                                    <h:inputHidden id="x" value="#{pointBean.x}"/>
+                                    <p:slider for="x"
+                                              display="xOutput"
+                                              minValue="-4"
+                                              maxValue="4"
+                                              displayTemplate="x: {value}">
+                                        <p:ajax event="slideEnd" listener="#{pointBean.onSlideEnd}"/>
+                                    </p:slider>
+                                    <h:outputText id="xOutput" value="x = #{pointBean.x}"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <h:outputLabel value="Y: " />
+                                    <h:inputText id="y" value="#{pointBean.y}" required="true">
+                                        <f:validator validatorId="ValidatorForm" />
+                                    </h:inputText>
+                                    <h:message for="y" styleClass="error-hint" />
+                                    <p class="form-hint">Допустимый диапазон: -3 до 3</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <h:outputLabel value="R: "/>
+                                    <h:inputHidden id="r" value="#{pointBean.r}"/>
+                                    <p:slider for="r"
+                                              display="rOutput"
+                                              minValue="1"
+                                              maxValue="4"
+                                              step="0.25"
+                                              displayTemplate="r: {value}">
+                                        <p:ajax event="slideEnd" listener="#{pointBean.onSlideEndR}" update="graph-card"/>
+                                    </p:slider>
+                                    <h:outputText id="rOutput" value="r = #{pointBean.r}"/>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="reset" onclick="resetValues()">Сбросить</button>
+                                    <p:commandButton id="check-button"
+                                                     value="Проверить"
+                                                     action="#{pointBean.checkPoint}"
+                                                     ajax="true"
+                                                     update="coordinateForm result-table resultsPanel"
+                                                     styleClass="check-button"/>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card results-section" id="point-table-card">
+
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Результаты проверки
+                    </h3>
+                    <p class="card-subtitle">История проверок попадания точки в область</p>
+                </div>
+
+                <div class="card-body">
+                    <div id="point-table">
+                        <h:form id="clear">
+                            <div class="table-header">
+                                <h3>Последние результаты</h3>
+                                <p:commandButton id="clearTable"
+                                                 value="Очистить"
+                                                 action="#{pointBean.clearPoint}"
+                                                 ajax="true"
+                                                 update="resultsPanel"
+                                                 styleClass="clearTable"/>
+                            </div>
+                        </h:form>
+
+                        <h:panelGroup id="resultsPanel">
+                            <h:panelGroup id="empty-table" rendered="#{empty pointBean.points}">
+                                <p>Нет данных</p>
+                            </h:panelGroup>
+
+                            <h:panelGroup styleClass="table-container" id="tableContainer">
+
+                                <h:dataTable id="result-table" value="#{pointBean.points}" var="point" rendered="#{not empty pointBean.points}">
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="id"/>
+                                        </f:facet>
+                                        <h:outputText value="#{point.id}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="x"/>
+                                        </f:facet>
+                                        <h:outputText value="#{point.x}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="y" />
+                                        </f:facet>
+                                        <h:outputText value="#{point.y}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="r"/>
+                                        </f:facet>
+                                        <h:outputText value="#{point.r}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Result"/>
+                                        </f:facet>
+                                        <h:outputText value="#{point.check}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="CurTime"/>
+                                        </f:facet>
+                                        <h:outputText value="#{point.clickTime}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Execution time"/>
+                                        </f:facet>
+                                        <h:outputText value="#{point.executionTime}"/>
+                                    </h:column>
+                                </h:dataTable>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="margin: 15px; align-items: center; display: flex; justify-content: center;">
+                    <h:link value="Start page" outcome="start" styleClass="simple-link" />
+                </div>
+            </div>
+        </div>
+    </main>
+</h:body>
+</html>
