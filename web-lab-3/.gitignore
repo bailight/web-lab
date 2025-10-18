@@ -16,9 +16,6 @@ mvnw.cmd
 *.iml
 *.ipr
 
-#resources
-src/main/resources/db.properties
-
 ### Eclipse ###
 .apt_generated
 .classpath
