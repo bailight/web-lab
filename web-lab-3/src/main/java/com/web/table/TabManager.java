@@ -1,4 +1,4 @@
-package com.web;
+package com.web.table;
 
 import com.web.data.Point;
 
@@ -6,24 +6,12 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class TabManager {
-    public static final String DATABASE_URL_LOCAL = "jdbc:postgresql://localhost:11001/test";
+
     private final Connection connection;
 
-    public TabManager() throws SQLException {
-        this.connection = DriverManager.getConnection(DATABASE_URL_LOCAL,"Baili","aaa111...");
-        createDataTable();
-    }
+    public TabManager(String url, String user, String password) throws SQLException {
+        this.connection = DriverManager.getConnection(url, user, password);
 
-    private void createDataTable() throws SQLException {
-        Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS PointsWEB"
-                + "(id SERIAL PRIMARY KEY, "
-                + " x double precision NOT NULL, "
-                + " y double precision NOT NULL, "
-                + " r double precision NOT NULL, "
-                + " checkResult BOOLEAN NOT NULL DEFAULT false, "
-                + " clickTime TEXT NOT NULL,"
-                + " executionTime TEXT NOT NULL)");
     }
 
     public ArrayList<Point> show() throws SQLException {

@@ -1,6 +1,8 @@
 package com.web;
 
 import com.web.data.Point;
+import com.web.table.TabCreator;
+import com.web.table.TabManager;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.application.FacesMessage;
@@ -32,15 +34,21 @@ public class PointBean implements Serializable {
     private TabManager DBManager;
     private ArrayList<Point> points;
 
-    public PointBean() throws SQLException {
+    public PointBean() {
     }
 
     @PostConstruct
-    public void init() throws SQLException {
-        this.DBManager = new TabManager();
+    public void init() throws Exception {
+        TabCreator tabCreator = new TabCreator();
+
+        this.DBManager = new TabManager(
+                tabCreator.dbProps.getProperty("db.url"),
+                tabCreator.dbProps.getProperty("db.user"),
+                tabCreator.dbProps.getProperty("db.password")
+        );
     }
 
-    public void checkPoint() throws SQLException {
+    public void checkPoint() {
         clickTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         long startTime = System.nanoTime();
 
@@ -75,7 +83,7 @@ public class PointBean implements Serializable {
     }
 
     public ArrayList<Point> getPoints() throws SQLException{
-        ArrayList<Point> points = DBManager.show();
+        points = DBManager.show();
         return points;
     }
 
