@@ -56,7 +56,7 @@ public class ResultServiceImpl implements ResultService {
     public List<ResultResponseDTO> getUserResults(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<Result> results = resultRepository.findByUser_id(user.getUserid());
+        List<Result> results = resultRepository.findByUser_userid(user.getUserid());
         List<ResultResponseDTO> resultsResponse = new ArrayList<>();
         for (Result result : results) {
             resultsResponse.add(mapToResponseDTO(result));
@@ -69,7 +69,7 @@ public class ResultServiceImpl implements ResultService {
     public void clearUserResults(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        resultRepository.deleteByUser_id(user.getUserid());
+        resultRepository.deleteByUser_userid(user.getUserid());
     }
 
     private ResultResponseDTO mapToResponseDTO(Result result) {

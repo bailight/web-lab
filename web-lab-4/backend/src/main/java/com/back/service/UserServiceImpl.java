@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.back.util.PasswordEncoder.checkPassword;
-import static com.back.util.PasswordEncoder.hashPassword;
+import static com.back.util.SelfPasswordEncoder.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO register(UserRequestDTO registrationRequest) {
+    public void register(UserRequestDTO registrationRequest) {
         String username = registrationRequest.getUsername();
         String password = registrationRequest.getPassword();
 
@@ -53,7 +53,14 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(hashPassword(password));
         userRepository.save(newUser);
 
-        return new UserResponseDTO(username);
+    }
 
+    public User getUser(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("User " + username + " not found");
+        }
+        return user.get();
     }
 }

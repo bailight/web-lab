@@ -1,12 +1,15 @@
 package com.back.util;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 @Component
-public class PasswordEncoder {
+public class SelfPasswordEncoder implements PasswordEncoder {
     public static String hashPassword(String password){
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-384");
@@ -27,5 +30,15 @@ public class PasswordEncoder {
 
     public static boolean checkPassword(String password, String hashedPassword){
         return hashPassword(password).equals(hashedPassword);
+    }
+
+    @Override
+    public @Nullable String encode(@Nullable CharSequence rawPassword) {
+        return hashPassword(Objects.requireNonNull(rawPassword).toString());
+    }
+
+    @Override
+    public boolean matches(@Nullable CharSequence rawPassword, @Nullable String encodedPassword) {
+        return hashPassword(Objects.requireNonNull(rawPassword).toString()).equals(encodedPassword);
     }
 }

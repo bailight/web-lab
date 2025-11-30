@@ -8,6 +8,6 @@ public interface UserService {
 
     UserResponseDTO login(UserRequestDTO loginRequest);
 
-    UserResponseDTO register(UserRequestDTO registrationRequest);
+    void register(UserRequestDTO registrationRequest);
 
 }

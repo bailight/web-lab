@@ -11,28 +11,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/back/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestDTO userRequest) {
-        return ResponseEntity.ok(userService.login(userRequest));
+    public ResponseEntity<?> login(@RequestBody UserRequestDTO userRequest) {
+        UserResponseDTO userResponse = userService.login(userRequest);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "200");
+        response.put("message", "Login Successful ");
+        response.put("username", userResponse.getUsername());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDTO registrationDTO) {
         userService.register(registrationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Registration successful");
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "201");
+        response.put("message", "Registration successful");
+        response.put("username", registrationDTO.getUsername());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody UserRequestDTO userRequest) {
-
-        return ResponseEntity.ok("Logout successful");
+    public ResponseEntity<?> logout() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "200");
+        response.put("message", "Logout successful");
+        return ResponseEntity.ok(response);
     }
 
 }
