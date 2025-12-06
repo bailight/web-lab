@@ -56,8 +56,8 @@ const Canvas = ({ r = 1, results, onCanvasClick }) => {
 
         if (results && results.length > 0) {
             results.forEach(result => {
-                const { x, y } = result;
-                drawPoints(x, y);
+                const { x, y , check} = result;
+                drawPoints(x, y, check);
             });
         }
     }, [r, results]);
@@ -118,7 +118,7 @@ const Canvas = ({ r = 1, results, onCanvasClick }) => {
         ctx.fillText("y", centerX + 10, 10);
     };
 
-    const drawPoints = (x, y) => {
+    const drawPoints = (x, y, check) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         const scale = 50;
@@ -129,7 +129,7 @@ const Canvas = ({ r = 1, results, onCanvasClick }) => {
         const pointX = centerX + x * scale;
         const pointY = centerY - y * scale;
 
-        ctx.fillStyle = "black";
+        ctx.fillStyle = check ? "#5fec5f" : "#ef3d3d";
         ctx.beginPath();
         ctx.arc(pointX, pointY, 3, 0, 2 * Math.PI);
         ctx.fill();

@@ -73,7 +73,8 @@ const resultsSlice = createSlice({
             })
 
             .addCase(getResults.fulfilled, (state, action) => {
-                state.results = action.payload;
+                state.results = [...action.payload].reverse();
+
             })
             .addCase(getResults.rejected, (state, action) => {
                 state.error = action.payload;
