@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
         if (user.isEmpty()) {
             throw new UserNotFoundException("User " + username + " not found");
-        }else if(!checkPassword(password, user.get().getPassword())){
+        }else if(!checkPassword(password, user.get().getPassword(), user.get().getSalt())){
             throw new WrongPasswordException("Wrong password");
         }else{
             return new UserResponseDTO(username);
@@ -48,9 +48,12 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("User " + username + " exists");
         }
 
+        String salt = generateSalt();
+
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setPassword(hashPassword(password));
+        newUser.setPassword(hashPassword(password, salt));
+        newUser.setSalt(salt);
         userRepository.save(newUser);
 
     }
