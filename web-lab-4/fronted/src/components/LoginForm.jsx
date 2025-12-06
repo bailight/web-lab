@@ -10,7 +10,7 @@ const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    const { error } = useSelector((state) => state.auth);
+    const { error, info } = useSelector((state) => state.auth);
     const { isAuthenticated } = useSelector((state) => state.auth);
 
     const handleLogin = () => {
@@ -34,6 +34,7 @@ const LoginForm = () => {
                 <Container maxWidth="xs">
                     <Box mb={4}>
                         {error && <Box m={1}><Alert severity="error">{error}</Alert></Box>}
+                        {info && <Box m={1}><Alert severity="success">{info}</Alert></Box>}
                         <Stack alignItems="center" justifyContent="center">
                             <Box>
                                 <h1>Login</h1>

@@ -25,17 +25,17 @@ const Canvas = ({ r = 1, results, onCanvasClick }) => {
         comments(ctx, scale, centerX, width, R);
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(0, 100, 255, 0.5)';
+        ctx.fillStyle = 'rgba(185,185,185,0.5)';
         ctx.fillRect(centerX, centerY, - scale * R/2,scale * R);
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(0, 100, 255, 0.5)';
+        ctx.fillStyle = 'rgba(185,185,185, 0.5)';
         ctx.arc(centerX, centerY, scale * R / 2, -Math.PI / 2, Math.PI,true);
         ctx.lineTo(centerX, centerY);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(0, 100, 255, 0.5)';
+        ctx.fillStyle = 'rgba(185,185,185, 0.5)';
         ctx.moveTo(centerX, centerY);
         ctx.lineTo(centerX + scale * R, centerY);
         ctx.lineTo(centerX, centerY - scale * R);

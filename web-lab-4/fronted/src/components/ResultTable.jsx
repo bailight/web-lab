@@ -1,28 +1,40 @@
-import {Table, TableCell, TableHead, TableRow} from "@mui/material";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
-const ResultTable = ({results}) => {
-
+const ResultTable = ({ results }) => {
     return (
-        <Table id="resultTable">
-            <TableHead>
-                <TableRow>
-                    <TableCell sx={{textAlign: 'center'}}>X</TableCell>
-                    <TableCell sx={{textAlign: 'center'}}>Y</TableCell>
-                    <TableCell sx={{textAlign: 'center'}}>R</TableCell>
-                    <TableCell sx={{textAlign: 'center'}}>Result</TableCell>
-                </TableRow>
-            </TableHead>
-            <tbody>
-            {results.map((result) => (
-                <TableRow key={result.id}>
-                    <TableCell sx={{textAlign: 'center'}}>{result.x}</TableCell>
-                    <TableCell sx={{textAlign: 'center'}}>{result.y}</TableCell>
-                    <TableCell sx={{textAlign: 'center'}}>{result.r}</TableCell>
-                    <TableCell sx={{textAlign: 'center'}}>{result.check ? "True" : "False"}</TableCell>
-                </TableRow>
-            ))}
-            </tbody>
-        </Table>
+        <DataTable
+            value={results}
+            id="resultTable"
+            className="prime-table"
+            scrollable
+            scrollHeight="450px"
+            stripedRows
+        >
+            <Column
+                field="x"
+                header="X"
+                align="center"
+                body={(row) => row.x}
+            />
+            <Column
+                field="y"
+                header="Y"
+                align="center"
+                body={(row) => row.y}
+            />
+            <Column
+                field="r"
+                header="R"
+                align="center"
+                body={(row) => row.r}
+            />
+            <Column
+                header="Result"
+                align="center"
+                body={(row) => row.check ? "True" : "False"}
+            />
+        </DataTable>
     );
 };
 

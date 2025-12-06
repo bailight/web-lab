@@ -14,9 +14,7 @@ body {
 }
 
 .container{
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px auto;
     width: 95%;
     display: flex;
     justify-content: center;
@@ -44,10 +42,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 30px;
+    margin: 20px;
     border-radius: 20px;
     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
     background-color: rgb(255, 255, 255, 0.5);
+    width: 100%;
 }
 
 .container #welcome{
@@ -129,32 +128,73 @@ body {
     margin: 10px auto;
 }
 
-
-#resultTable{
+#resultTable {
     margin: 10px auto;
     border-radius: 10px;
     background-color: rgb(255, 255, 255, 0.6);
     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
     height: 450px;
-}
-
-table{
-    margin: 10px;
+    overflow: auto;
     width: 100%;
 }
 
-th, td {
-    padding-inline: 20px;
-    text-align: left;
+.prime-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.prime-table .p-datatable-header {
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 0;
+    border-radius: 10px 10px 0 0;
+}
+
+.prime-table .p-datatable-thead > tr > th {
+    text-align: center !important;
+    padding: 12px 4px !important;
+    font-weight: 500 !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f5f5f5;
+    width: 25% !important;
+    white-space: nowrap;
+}
+
+.prime-table .p-datatable-tbody > tr > td {
+    text-align: center !important;
+    padding: 12px 4px !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: transparent;
+    width: 25% !important;
+    white-space: nowrap;
+}
+
+.prime-table .p-datatable-tbody > tr:hover > td {
+    background-color: #fafafa !important;
+}
+
+.prime-table .p-datatable-thead > tr > th:first-child {
+    border-radius: 10px 0 0 0 !important;
+}
+.prime-table .p-datatable-thead > tr > th:last-child {
+    border-radius: 0 10px 0 0 !important;
+}
+.prime-table .p-datatable-tbody > tr:last-child > td:first-child {
+    border-radius: 0 0 0 10px !important;
+}
+.prime-table .p-datatable-tbody > tr:last-child > td:last-child {
+    border-radius: 0 0 10px 0 !important;
 }
 
 .App {
     text-align: center;
-
-
 }
 
-@media (min-width: 755px) and (max-width: 1206px) {
+@media (min-width: 802px) and (max-width: 1144px) {
     .container {
         flex-direction: column;
     }
@@ -171,7 +211,7 @@ th, td {
     }
 }
 
-@media (max-width: 754px) {
+@media (max-width: 802px) {
     .container {
         flex-direction: column;
     }

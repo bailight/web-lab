@@ -5,7 +5,10 @@ export const check =  createAsyncThunk('results/check', async ({x, y, r, usernam
     try {
         const response = await axios.post('http://localhost:8080/back/api/results/check', {x, y, r, username});
         console.log(response.data)
-        return response.data;
+
+        return Array.isArray(response.data)
+            ? response.data
+            : [response.data];
     } catch (error) {
         if (error.response) {
             return rejectWithValue(error.response.data.message);
