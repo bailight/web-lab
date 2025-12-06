@@ -70,10 +70,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session
-                    .maximumSessions(1)
-            );
+            .formLogin(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

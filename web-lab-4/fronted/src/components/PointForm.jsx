@@ -48,10 +48,10 @@ const PointForm = ({ r = 1, setR }) => {
             setR(1);
             return;
         }
+
         const numValue = parseFloat(inputValue);
-        let intValue = Number.isNaN(numValue) ? 1 : Math.round(numValue);
-        intValue = intValue > 0 ? intValue : 1;
-        const clampedValue = Math.max(1, Math.min(3, intValue));
+        const intValue = Number.isNaN(numValue) ? 0 : Math.round(numValue);
+        const clampedValue = Math.max(-5, Math.min(3, intValue));
         setR(clampedValue);
     };
 
@@ -124,7 +124,7 @@ const PointForm = ({ r = 1, setR }) => {
                                 inputProps: {
                                     min: -5,
                                     max: 3,
-                                    step: "any"
+                                    step: 1
                                 }
                             }}
                             sx={{ width: 120 }}
@@ -157,9 +157,9 @@ const PointForm = ({ r = 1, setR }) => {
                             sx={{ width: 120 }}
                             InputProps={{
                                 inputProps: {
-                                    min: 1,
+                                    min: -5,
                                     max: 3,
-                                    step: "any"
+                                    step: 1
                                 }
                             }}
                         />

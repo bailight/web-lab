@@ -22,23 +22,35 @@ const Canvas = ({ r = 1, results, onCanvasClick }) => {
 
         createOxi(ctx, width, centerX, centerY, height);
 
-        comments(ctx, scale, centerX, width, R);
+        comments(ctx, scale, centerX, width, Math.abs(R));
+
+        const isNegative = R < 0;
+        const absR = Math.abs(R);
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(185,185,185,0.5)';
-        ctx.fillRect(centerX, centerY, - scale * R/2,scale * R);
+        ctx.fillStyle = 'rgba(185, 185, 185, 0.5)';
+        const rectWidth = isNegative ? scale * absR / 2 : -scale * absR / 2;
+        const rectHeight = isNegative ? -scale * absR : scale * absR;
+        ctx.fillRect(centerX, centerY, rectWidth, rectHeight);
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(185,185,185, 0.5)';
-        ctx.arc(centerX, centerY, scale * R / 2, -Math.PI / 2, Math.PI,true);
+        ctx.fillStyle = 'rgba(185, 185, 185, 0.5)';
+        const arcStart = isNegative ? 0 : -Math.PI / 2;
+        const arcEnd = isNegative ? Math.PI / 2 : -Math.PI;
+        const drawCounterClockwise = isNegative ? false : true;
+        ctx.arc(centerX, centerY, scale * absR / 2, arcStart, arcEnd, drawCounterClockwise);
         ctx.lineTo(centerX, centerY);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(185,185,185, 0.5)';
+        ctx.fillStyle = 'rgba(185, 185, 185, 0.5)';
         ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + scale * R, centerY);
-        ctx.lineTo(centerX, centerY - scale * R);
+        const triPoint1X = isNegative ? centerX - scale * absR : centerX + scale * absR;
+        const triPoint1Y = centerY;
+        const triPoint2X = centerX;
+        const triPoint2Y = isNegative ? centerY + scale * absR : centerY - scale * absR;
+        ctx.lineTo(triPoint1X, triPoint1Y);
+        ctx.lineTo(triPoint2X, triPoint2Y);
         ctx.closePath();
         ctx.fill();
 
