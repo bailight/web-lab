@@ -1,12 +1,14 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
+import {getResults, logoutClearResults} from './ResultAction';
 
-export const login = createAsyncThunk('auth/login', async ({ username, password }, { rejectWithValue }) => {
+export const login = createAsyncThunk('auth/login', async ({ username, password }, { rejectWithValue, dispatch }) => {
     if (!username ||!password) {
         return rejectWithValue('Username and password are required');
     }
     try {
-        const response = await axios.post('http://localhost:8080/back/api/users/login', {username, password});
+        const response = await axios.post('http://localhost:8080/back/api/users/login', {username, password}, { withCredentials: true });
+        dispatch(getResults({}, undefined));
         console.log(response.data)
         return response.data;
     } catch (error) {
@@ -22,7 +24,7 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
         return rejectWithValue('Username and password are required');
     }
     try {
-        const response = await axios.post('http://localhost:8080/back/api/users/register', { username, password });
+        const response = await axios.post('http://localhost:8080/back/api/users/register', { username, password }, { withCredentials: true });
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -32,9 +34,10 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
     }
 });
 
-export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue, dispatch }) => {
     try {
-        const response = await axios.post('http://localhost:8080/back/api/users/logout');
+        const response = await axios.post('http://localhost:8080/back/api/users/logout', {},{ withCredentials: true });
+        dispatch(logoutClearResults());
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -44,24 +47,26 @@ export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValu
     }
 });
 
+export const checkLoginStatus = createAsyncThunk('auth/checkLoginStatus',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get('http://localhost:8080/back/api/users/check-login', { withCredentials: true });
+            console.log(response.data)
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
         isAuthenticated: false,
-        token: null,
         username: null,
         info: null,
         error: null
     },
-    // reducers: {
-    //     clearAuthState: (state) => {
-    //         state.isAuthenticated = false;
-    //         state.token = null;
-    //         state.username = null;
-    //         state.info = null;
-    //         state.error = null;
-    //     }
-    // },
     extraReducers: (builder) => {
         builder
             .addCase(login.fulfilled, (state, action) => {
@@ -94,9 +99,18 @@ const authSlice = createSlice({
             })
             .addCase(logout.rejected, (state, action) => {
                 state.error = action.payload;
+            })
+            .addCase(checkLoginStatus.fulfilled, (state, action) => {
+                state.isAuthenticated = action.payload.isAuthenticated;
+                state.username = action.payload.username;
+                state.error = null;
+            })
+            .addCase(checkLoginStatus.rejected, (state, action) => {
+                state.isAuthenticated = false;
+                state.username = null;
+                state.error = action.payload || 'Session expired';
             });
     }
 });
 
-// export const { clearAuthState } = authSlice.actions;
 export default authSlice.reducer;

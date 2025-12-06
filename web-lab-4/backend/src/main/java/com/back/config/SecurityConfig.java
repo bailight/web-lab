@@ -73,12 +73,4 @@ public class SecurityConfig implements WebMvcConfigurer {
             .formLogin(AbstractHttpConfigurer::disable);
         return http.build();
     }
-
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return (request, response, authentication) -> {
-            request.getSession().setAttribute("user", authentication.getName());
-            response.sendRedirect("/");
-        };
-    }
 }
